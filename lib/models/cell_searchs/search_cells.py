@@ -127,12 +127,37 @@ class MixedOp(nn.Module):
   def __init__(self, space, C, stride, affine, track_running_stats):
     super(MixedOp, self).__init__()
     self._ops = nn.ModuleList()
+    self._ops_nop = []
+    self._ops_flp = []
     for primitive in space:
       op = OPS[primitive](C, C, stride, affine, track_running_stats)
       self._ops.append(op)
+      op_nop = 0
+      op_flp = 0
+      for p in op.parameter():
+        op_nop += p.numel()
+        op_flp += self.cal_flops(p, C, stride)
+      self._ops_nop.append(ops_nop)
+      self._ops_flp.append(op_flp)
+
+  def cal_flops(p, C, stride):
+    if p == 'none':
+      flops = 0
+    elif p == 'skip_connect':
+      if stride == 1:
+        flops = C*C*32*32
+      elif stride == 2:
+        flops = 2*C*C/2*32/2*32/2
+    elif p == 'nor_conv_1x1':
+      flops = 32*32*C + C*C*(32/stride)**2 + 2*C*32*32
+    elif p == 'nor_conv_3x3':
+      flops = 32*32*C + C*C*3*3*(34/stride)**2 + 2*C*32*32
+    elif p == 'avg_pool_3x3':
+      flops = C*32*32
+    return flops
 
   def forward_gdas(self, x, weights, index):
-    return self._ops[index](x) * weights[index]
+    return self._ops[index](x) * weights[index], self._ops_nop[index](x) * weights[index]
 
   def forward_darts(self, x, weights):
     return sum(w * op(x) for w, op in zip(weights, self._ops))
