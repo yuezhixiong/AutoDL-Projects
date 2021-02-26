@@ -34,7 +34,7 @@ data_path='./data'
 benchmark_file=/home2/zhangyu_group/zy_lab/yuezx/NAS-Bench-201-v1_1-096897.pth
 # benchmark_file=None
 
-save_dir=./output/search-cell-${space}/GDAS-${dataset}-BN${BN}
+save_dir=./output/search-cell-${space}/gdas_e2rnas-${dataset}-BN${BN}
 
 OMP_NUM_THREADS=4 python ./exps/algos/GDAS.py \
 	--save_dir ${save_dir} --max_nodes ${max_nodes} --channel ${channel} --num_cells ${num_cells} \
@@ -44,4 +44,7 @@ OMP_NUM_THREADS=4 python ./exps/algos/GDAS.py \
 	--tau_max 10 --tau_min 0.1 --track_running_stats ${BN} \
 	--arch_learning_rate 0.0003 --arch_weight_decay 0.001 \
 	--workers 4 --print_freq 200 --rand_seed ${seed} \
+	--nop_outer --adv_outer --flp_outer --ood_inner --MGDA \
 	--arch_nas_dataset ${benchmark_file} \
+	--flp_constrain abs --flp_constrain_min 3 \
+	--nop_constrain abs --nop_constrain_min 3	

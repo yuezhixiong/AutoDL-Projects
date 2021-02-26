@@ -83,16 +83,16 @@ def search_func(xloader, network, criterion, scheduler, w_optimizer, a_optimizer
 
     # ---- nop loss ----
     if xargs.nop_outer:
-      if xargs.nop_constrain:
-        nop_loss = torch.abs(nop_constrain_min - nop_loss)[0]
+      if xargs.nop_constrain == 'abs':
+        nop_loss = torch.abs(xargs.nop_constrain_min - nop_loss)
       loss_data['nop'] = nop_loss.item()
       grads['nop'] = list(torch.autograd.grad(nop_loss, network.get_alphas(), retain_graph=True))
     # ---- end ----
 
     # ---- flp loss ----
     if xargs.flp_outer:
-      if xargs.flp_constrain:
-        flp_loss = torch.abs(flp_constrain_min - flp_loss)[0]
+      if xargs.flp_constrain == 'abs':
+        flp_loss = torch.abs(xargs.flp_constrain_min - flp_loss)
       loss_data['flp'] = flp_loss.item()
       grads['flp'] = list(torch.autograd.grad(flp_loss, network.get_alphas(), retain_graph=True))
     # ---- end ----
@@ -142,9 +142,9 @@ def search_func(xloader, network, criterion, scheduler, w_optimizer, a_optimizer
     
     if xargs.MGDA and (len(grads)>1):
       sol, _ = MinNormSolver.find_min_norm_element([grads[t] for t in grads])
+      print(sol) # acc, adv, nop
     else:
       sol = [1] * len(grads)
-    print(sol) # acc, adv, nop
 
     arch_loss = 0
     for kk, t in enumerate(grads):
