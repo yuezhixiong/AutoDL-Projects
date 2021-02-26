@@ -98,9 +98,12 @@ class TinyNetworkGDAS(nn.Module):
       else: break
 
     feature = self.stem(inputs)
+    nop_loss, flp_loss = 0, 0
     for i, cell in enumerate(self.cells):
       if isinstance(cell, SearchCell):
-        feature = cell.forward_gdas(feature, hardwts, index)
+        feature, cell_nop, cell_flp = cell.forward_gdas(feature, hardwts, index)
+        nop_loss += cell_nop
+        flp_loss += cell_flp
       else:
         feature = cell(feature)
     out = self.lastact(feature)
@@ -108,4 +111,4 @@ class TinyNetworkGDAS(nn.Module):
     out = out.view(out.size(0), -1)
     logits = self.classifier(out)
 
-    return out, logits
+    return out, logits, nop_loss, flp_loss
