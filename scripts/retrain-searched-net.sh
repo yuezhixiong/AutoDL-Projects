@@ -1,5 +1,6 @@
 #!/bin/bash
 # bash ./scripts/retrain-searched-net.sh cifar10 ${NAME} ${PATH} 256 -1
+TORCH_HOME='./data'
 echo script name: $0
 echo $# arguments
 if [ "$#" -ne 5 ] ;then
@@ -21,7 +22,7 @@ batch=$4
 rseed=$5
 
 if [ ${dataset} == 'cifar10' ] || [ ${dataset} == 'cifar100' ]; then
-  xpath=$TORCH_HOME/cifar.python
+  xpath=$TORCH_HOME/
   base=CIFAR
   workers=4
   cutout_length=16

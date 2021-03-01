@@ -1,5 +1,6 @@
 #!/bin/bash
 # bash ./scripts-search/NAS-Bench-201/train-a-net.sh resnet 16 5
+TORCH_HOME=/home2/zhangyu_group/zy_lab/yuezx/AutoDL-Projects/data/
 echo script name: $0
 echo $# arguments
 if [ "$#" -ne 3 ] ;then

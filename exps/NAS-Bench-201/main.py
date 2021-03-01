@@ -175,7 +175,7 @@ def train_single_model(save_dir, workers, datasets, xpaths, splits, use_less, se
       arch = CellStructure.str2structure(model_str)
     except:
       raise ValueError('Invalid model string : {:}. It can not be found or parsed.'.format(model_str))
-  assert arch.check_valid_op(get_search_spaces('cell', 'full')), '{:} has the invalid op.'.format(arch)
+  # assert arch.check_valid_op(get_search_spaces('cell', 'full')), '{:} has the invalid op.'.format(arch)
   logger.log('Start train-evaluate {:}'.format(arch.tostr()))
   logger.log('arch_config : {:}'.format(arch_config))
 
